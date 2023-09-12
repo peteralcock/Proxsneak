@@ -1,34 +1,16 @@
 
+## PROXSNEAK
 
-<h1 align="center">PROXSNEAK</h1>
+For sneakier sneakerbots and stealthier stealth modes, this provides one single endpoint for clients. Supports **[HAProxy](http://www.haproxy.org/)**, **socks** protocol and **http-proxy** servers: **[polipo](https://www.irif.fr/~jch/software/polipo/)**, **[privoxy](https://www.privoxy.org/)** and **[hpts](https://github.com/oyyd/http-proxy-to-socks)**.
 
-<h4 align="center">For sneakier sneakerbots and stealthier stealth modes. Increase anonymity when conducting penetration tests and testing the security of infrastructure. Or be square... up to you.</h4>
-
-
-
-<p align="center">
-   <a href="#description">Description</a>
- • <a href="#introduction">Introduction</a>
- • <a href="#how-to-use">How To Use</a>
- • <a href="#parameters">Parameters</a>
- • <a href="#requirements">Requirements</a>
- • <a href="#docker">Docker</a>
- • <a href="#other">Other</a>
- • <a href="#license">License</a>
-</p>
-
-<br>
-
-<p align="center">
-  <img src="https://github.com/trimstray/multitor/blob/master/static/img/multitor_output_1.png" alt="Master">
-</p>
-
-## Description
-
-It provides one single endpoint for clients. Supports **[HAProxy](http://www.haproxy.org/)**, **socks** protocol and **http-proxy** servers: **[polipo](https://www.irif.fr/~jch/software/polipo/)**, **[privoxy](https://www.privoxy.org/)** and **[hpts](https://github.com/oyyd/http-proxy-to-socks)**.
+In addition, you can **view** previously running **TOR** processes and create a **new identity** for all or selected processes.
 
 
-## Gotchas
+## Introduction
+
+`multitor` was created with the aim of initialize many **TOR** processes as quickly as possible. I could use many instances for my daily use programs (web browsers, messangers and other). In addition, I was looking for a tool that would increase anonymity when conducting penetration tests and testing the security of infrastructure.
+
+Before using the `multitor` you need to remember:
 
 - **TOR** does attempt to generate a bunch of streams for you already. From this perspective, it is already load balancing (and it's much smarter at it than **HAproxy**)
 - the main goal is masking from where we get by sending requests to multiple streams. It is not so easy to locate where an attacker comes from. If you used http/https servers e.g. proxy servers, you will know what is going on but...
@@ -102,55 +84,25 @@ Provides the following options:
 - [haproxy](https://www.haproxy.org/)
 - [polipo](https://www.irif.fr/~jch/software/polipo/)
 - [privoxy](https://www.privoxy.org/)
-- [http-proxy-to-socks](https://github.com/oyyd/http-proxy-to-socks)
+- [http-proxy-to-socks](https://github.com/peteralcock/proxsneak)
 
 This tool working with:
 
 - **GNU/Linux** (testing on Debian and CentOS)
 - **[Bash](https://www.gnu.org/software/bash/)** (testing on 4.4.19)
-
-Also you will need **root access**.
-
-
-### Limitations
-
 - each **TOR**, **http-proxy** and **HAProxy** processes needs a certain number of memory. If the number of **TOR** processes is too big, the oldest one will be automatically killed by the system
 - **Polipo** is no longer supported but it is still a very good and light proxy. In my opinion the best http-proxy solution is **Privoxy**
 - I think this topic will be usefull for You before using `multitor` - [How to run multiple Tor processes at once with different exit IPs?](https://stackoverflow.com/questions/14321214/how-to-run-multiple-tor-processes-at-once-with-different-exit-ips)
 
 
-## How to use Python with Tor and Privoxy
-
 Tested on **Ubuntu 18.04 Docker container**. The Dockerfile is a single line `FROM ubuntu:18.04`. Alternatively, you can simply run `docker run -it ubuntu:18.04 bash`.
 
 NOTE: stopping services didn't work for me for some reason. That's why there is `kill $(pidof <service name>)` after each failed `service <service name> stop` to kill it.
 
-### References
 
-This guide is basically a compilation of all the resources listed below.
+## Steps
 
-* [How to request new TOR identity in terminal](https://stackoverflow.com/q/16987518/4183498)
-* [How to anonymize the programs from your terminal with torify](https://linuxaria.com/howto/how-to-anonymize-the-programs-from-your-terminal-with-torify)
-* [How To: Using Tor From The Command Line](https://justhackerthings.com/post/using-tor-from-the-command-line/)
-* [How to change Tor identity in Python?](https://stackoverflow.com/q/9887505/4183498)
-* [Make requests using Python over Tor](https://stackoverflow.com/q/30286293/4183498)
-* [Crawling anonymously with Tor in Python](http://sacharya.com/crawling-anonymously-with-tor-in-python/)
-  * [Alternative link (Gist) for "Crawling anonymously with Tor in Python"](https://gist.github.com/KhepryQuixote/46cf4f3b999d7f658853)
-* [Tor IP changing and web scraping](https://dm295.blogspot.com/2016/02/tor-ip-changing-and-web-scraping.html)
-
-
-### Related
-
-* Other awesome open-source projects
-  * [Tor and Privoxy (web proxy configured to route through tor) Docker container](https://github.com/dperson/torproxy)
-  * [Rotating TOR proxy with Docker](https://github.com/mattes/rotating-proxy)
-* Mine 
-  * [A step-by-step guide how to use Tor without Authentication](https://gist.github.com/DusanMadar/c1155329cf6a71e4346cae271a2eafd3)
-  * [TorIpChanger - Python powered way to get a unique Tor IP](https://github.com/DusanMadar/TorIpChanger)
-
-### Steps
-
-#### 1. Install and check Tor status
+### 1. Install and check Tor status
 ```console
 root@75f6721089f2:/# apt update
 root@75f6721089f2:/# apt install -y tor
@@ -160,7 +112,7 @@ root@75f6721089f2:/# service tor status
  * cannot read PID file /var/run/tor/tor.pid
  ```
 
-#### 2. Start Tor and check it's running
+### 2. Start Tor and check it's running
 ```console
 root@75f6721089f2:/# service tor start
  * Starting tor daemon...          [ OK ] 
@@ -168,7 +120,7 @@ root@75f6721089f2:/# service tor status
  * tor is running
 ```
 
-#### 3. Try to Authenticate with nc (Netcat)
+### 3. Try to Authenticate with nc (Netcat)
 It's not possible to connect as `ControlPort` is not set yet.
 ```console
 root@75f6721089f2:/# apt install -y netcat
@@ -176,7 +128,7 @@ root@75f6721089f2:/# echo -e 'AUTHENTICATE' | nc 127.0.0.1 9051
 (UNKNOWN) [127.0.0.1] 9051 (?) : Connection refused
 ```
 
-#### 4. Stop/kill Tor, set ControlPort and start Tor again
+### 4. Stop/kill Tor, set ControlPort and start Tor again
 ```console
 root@75f6721089f2:/# service tor stop
  * Stopping tor daemon...          [fail]
@@ -188,7 +140,7 @@ root@75f6721089f2:/# service tor start
  * Starting tor daemon...          [ OK ] 
 ```
 
-#### 5. Try to Authenticate with nc again
+### 5. Try to Authenticate with nc again
 It's possible to connect but Authentication fails.
 ```console
 root@75f6721089f2:/# echo -e 'AUTHENTICATE' | nc 127.0.0.1 9051
@@ -210,7 +162,7 @@ root@75f6721089f2:/# service tor start
  * Starting tor daemon...          [ OK ] 
 ```
 
-#### 7. Try to Authenticate with nc again
+### 7. Try to Authenticate with nc again
 Authentication passes with a correct password.
 ```console
 # NOTE Use Ctrl+C to exit.
@@ -220,7 +172,7 @@ root@75f6721089f2:/# echo -e 'AUTHENTICATE "my password"' | nc 127.0.0.1 9051
 250 OK
 ```
 
-#### 8. Check your public IP and currently used Tor ip
+### 8. Check your public IP and currently used Tor ip
 ```console
 root@75f6721089f2:/# apt install -y curl
 root@75f6721089f2:/# curl http://icanhazip.com/
@@ -229,7 +181,7 @@ root@75f6721089f2:/# torify curl http://icanhazip.com/
 185.220.101.17
 ```
 
-#### 9. Change and check Tor IP
+### 9. Change and check Tor IP
 ```console
 root@75f6721089f2:/# echo -e 'AUTHENTICATE "my password"\r\nsignal NEWNYM\r\nQUIT' | nc 127.0.0.1 9051
 250 OK
@@ -264,7 +216,7 @@ root@75f6721089f2:/# torify curl http://icanhazip.com/
 185.107.81.233
 ```
 
-#### 11. Install privoxy and check traffic is routed through Tor
+### 11. Install privoxy and check traffic is routed through Tor
 Now that it's clear Tor is configured and works properly we can include `privoxy` to the loop.
 ```console
 root@75f6721089f2:/# apt install -y privoxy
@@ -298,7 +250,7 @@ root@75f6721089f2:/# curl -x 127.0.0.1:8118 http://icanhazip.com/
 176.10.99.200
 ```
 
-#### 12. Change and check Tor IP with Python3
+### 12. Change and check Tor IP with Python3
 ```console
 root@75f6721089f2:/# pip3 install requests==2.26.0
 root@75f6721089f2:/# python3
@@ -328,7 +280,7 @@ root@75f6721089f2:/# python3
 ```
 
 
-#### 13. [bonus] Change and check Tor IP with [TorIpChanger](https://github.com/DusanMadar/TorIpChanger)
+### 13. [bonus] Change and check Tor IP with [TorIpChanger](https://github.com/DusanMadar/TorIpChanger)
 ```console
 root@75f6721089f2:/# pip3 install toripchanger==1.1.3
 root@75f6721089f2:/# python3

@@ -32,7 +32,7 @@ It's simple:
 
 ```bash
 # Clone this repository
-git clone https://github.com/trimstray/multitor
+git clone https://github.com/peteralcock/proxsneak
 
 # Go into the repository
 cd multitor

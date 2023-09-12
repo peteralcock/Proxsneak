@@ -1,12 +1,131 @@
-# A step-by-step guide how to use Python with Tor and Privoxy
 
-Latest revision: 2021-12-05.
+
+<h1 align="center">PROXSNEAK</h1>
+
+<h4 align="center">For sneakier sneakerbots and stealthier stealth modes. Increase anonymity when conducting penetration tests and testing the security of infrastructure. Or be square... up to you.</h4>
+
+
+
+<p align="center">
+   <a href="#description">Description</a>
+ • <a href="#introduction">Introduction</a>
+ • <a href="#how-to-use">How To Use</a>
+ • <a href="#parameters">Parameters</a>
+ • <a href="#requirements">Requirements</a>
+ • <a href="#docker">Docker</a>
+ • <a href="#other">Other</a>
+ • <a href="#license">License</a>
+</p>
+
+<br>
+
+<p align="center">
+  <img src="https://github.com/trimstray/multitor/blob/master/static/img/multitor_output_1.png" alt="Master">
+</p>
+
+## Description
+
+It provides one single endpoint for clients. Supports **[HAProxy](http://www.haproxy.org/)**, **socks** protocol and **http-proxy** servers: **[polipo](https://www.irif.fr/~jch/software/polipo/)**, **[privoxy](https://www.privoxy.org/)** and **[hpts](https://github.com/oyyd/http-proxy-to-socks)**.
+
+
+## Gotchas
+
+- **TOR** does attempt to generate a bunch of streams for you already. From this perspective, it is already load balancing (and it's much smarter at it than **HAproxy**)
+- the main goal is masking from where we get by sending requests to multiple streams. It is not so easy to locate where an attacker comes from. If you used http/https servers e.g. proxy servers, you will know what is going on but...
+- using multiple **TOR** instances can increase the probability of using a compromised circuit
+- `multitor` getting some bandwidth improvements just because it's a different way of connecting to **TOR** network
+- in `multitor` configuration mostly **HAProxy** checks the local (syn, syn/ack) socket - not all **TOR** nodes (also exist nodes). If there is a problem with the socket it tries to send traffic to others available without touching what's next - it does not ensure that the data will arrive
+- **TOR** network is a separate organism on which the `multitor` has no effect If one of the nodes is damaged and somehow the data can not leave the exit node, it is likely that a connection error will be returned or, at best, the data will be transferred through another local socket
+- **HAProxy** load balance network traffic between local **TOR** or **http-proxy** processes - not nodes inside **TOR** network
+
+> **TOR** is a fine security project and an excellent component in a strategy of defence in depth but it isn’t (sadly) a cloak of invisibility. When using the **TOR**, always remember about ssl (e.g. https) wherever it is possible.
+
+Look also at **[Limitations](#limitations)**.
+
+## How To Use
+
+> :heavy_exclamation_mark: For a more detailed understanding of `multitor`, its parameters, functions and how it all works, see the **[Manual](https://github.com/trimstray/multitor/wiki/Manual)**.
+
+It's simple:
+
+```bash
+# Clone this repository
+git clone https://github.com/trimstray/multitor
+
+# Go into the repository
+cd multitor
+
+# Install
+./setup.sh install
+
+# Run the app
+multitor --init 2 --user debian-tor --socks-port 9000 --control-port 9900 --proxy privoxy --haproxy
+```
+
+> * symlink to `bin/multitor` is placed in `/usr/local/bin`
+> * man page is placed in `/usr/local/man/man8`
+
+## Parameters
+
+Provides the following options:
+
+```bash
+  Usage:
+    multitor <option|long-option>
+
+  Examples:
+    multitor --init 2 --user debian-tor --socks-port 9000 --control-port 9900
+    multitor --init 10 --user debian-tor --socks-port 9000 --control-port 9900 --proxy socks
+    multitor --show-id --socks-port 9000
+
+  Options:
+        --help                        show this message
+        --debug                       displays information on the screen (debug mode)
+        --verbose                     displays more information about TOR processes
+    -i, --init <num>                  init new tor processes
+    -k, --kill                        kill all multitor processes
+    -s, --show-id                     show specific tor process id
+    -n, --new-id                      regenerate tor circuit
+    -u, --user <string>               set the user (only with -i|--init)
+        --socks-port <port_num|all>   set socks port number
+        --control-port <port_num>     set control port number
+        --proxy <proxy_type>          set socks or http (polipo, privoxy, hpts) proxy server
+        --haproxy                     set HAProxy as a frontend for http proxies (only with --proxy)
+```
+
+## Requirements
+
+`multitor` uses external utilities to be installed before running:
+
+- [tor](https://www.torproject.org/)
+- [netcat](http://netcat.sourceforge.net/)
+- [haproxy](https://www.haproxy.org/)
+- [polipo](https://www.irif.fr/~jch/software/polipo/)
+- [privoxy](https://www.privoxy.org/)
+- [http-proxy-to-socks](https://github.com/oyyd/http-proxy-to-socks)
+
+This tool working with:
+
+- **GNU/Linux** (testing on Debian and CentOS)
+- **[Bash](https://www.gnu.org/software/bash/)** (testing on 4.4.19)
+
+Also you will need **root access**.
+
+
+### Limitations
+
+- each **TOR**, **http-proxy** and **HAProxy** processes needs a certain number of memory. If the number of **TOR** processes is too big, the oldest one will be automatically killed by the system
+- **Polipo** is no longer supported but it is still a very good and light proxy. In my opinion the best http-proxy solution is **Privoxy**
+- I think this topic will be usefull for You before using `multitor` - [How to run multiple Tor processes at once with different exit IPs?](https://stackoverflow.com/questions/14321214/how-to-run-multiple-tor-processes-at-once-with-different-exit-ips)
+
+
+## How to use Python with Tor and Privoxy
 
 Tested on **Ubuntu 18.04 Docker container**. The Dockerfile is a single line `FROM ubuntu:18.04`. Alternatively, you can simply run `docker run -it ubuntu:18.04 bash`.
 
 NOTE: stopping services didn't work for me for some reason. That's why there is `kill $(pidof <service name>)` after each failed `service <service name> stop` to kill it.
 
-## References
+### References
 
 This guide is basically a compilation of all the resources listed below.
 
@@ -20,7 +139,7 @@ This guide is basically a compilation of all the resources listed below.
 * [Tor IP changing and web scraping](https://dm295.blogspot.com/2016/02/tor-ip-changing-and-web-scraping.html)
 
 
-## Related
+### Related
 
 * Other awesome open-source projects
   * [Tor and Privoxy (web proxy configured to route through tor) Docker container](https://github.com/dperson/torproxy)
@@ -29,9 +148,9 @@ This guide is basically a compilation of all the resources listed below.
   * [A step-by-step guide how to use Tor without Authentication](https://gist.github.com/DusanMadar/c1155329cf6a71e4346cae271a2eafd3)
   * [TorIpChanger - Python powered way to get a unique Tor IP](https://github.com/DusanMadar/TorIpChanger)
 
-## Steps
+### Steps
 
-### 1. Install and check Tor status
+#### 1. Install and check Tor status
 ```console
 root@75f6721089f2:/# apt update
 root@75f6721089f2:/# apt install -y tor
@@ -41,7 +160,7 @@ root@75f6721089f2:/# service tor status
  * cannot read PID file /var/run/tor/tor.pid
  ```
 
-### 2. Start Tor and check it's running
+#### 2. Start Tor and check it's running
 ```console
 root@75f6721089f2:/# service tor start
  * Starting tor daemon...          [ OK ] 
@@ -49,7 +168,7 @@ root@75f6721089f2:/# service tor status
  * tor is running
 ```
 
-### 3. Try to Authenticate with nc (Netcat)
+#### 3. Try to Authenticate with nc (Netcat)
 It's not possible to connect as `ControlPort` is not set yet.
 ```console
 root@75f6721089f2:/# apt install -y netcat
@@ -57,7 +176,7 @@ root@75f6721089f2:/# echo -e 'AUTHENTICATE' | nc 127.0.0.1 9051
 (UNKNOWN) [127.0.0.1] 9051 (?) : Connection refused
 ```
 
-### 4. Stop/kill Tor, set ControlPort and start Tor again
+#### 4. Stop/kill Tor, set ControlPort and start Tor again
 ```console
 root@75f6721089f2:/# service tor stop
  * Stopping tor daemon...          [fail]
@@ -69,7 +188,7 @@ root@75f6721089f2:/# service tor start
  * Starting tor daemon...          [ OK ] 
 ```
 
-### 5. Try to Authenticate with nc again
+#### 5. Try to Authenticate with nc again
 It's possible to connect but Authentication fails.
 ```console
 root@75f6721089f2:/# echo -e 'AUTHENTICATE' | nc 127.0.0.1 9051
@@ -91,7 +210,7 @@ root@75f6721089f2:/# service tor start
  * Starting tor daemon...          [ OK ] 
 ```
 
-### 7. Try to Authenticate with nc again
+#### 7. Try to Authenticate with nc again
 Authentication passes with a correct password.
 ```console
 # NOTE Use Ctrl+C to exit.
@@ -101,7 +220,7 @@ root@75f6721089f2:/# echo -e 'AUTHENTICATE "my password"' | nc 127.0.0.1 9051
 250 OK
 ```
 
-### 8. Check your public IP and currently used Tor ip
+#### 8. Check your public IP and currently used Tor ip
 ```console
 root@75f6721089f2:/# apt install -y curl
 root@75f6721089f2:/# curl http://icanhazip.com/
@@ -110,7 +229,7 @@ root@75f6721089f2:/# torify curl http://icanhazip.com/
 185.220.101.17
 ```
 
-### 9. Change and check Tor IP
+#### 9. Change and check Tor IP
 ```console
 root@75f6721089f2:/# echo -e 'AUTHENTICATE "my password"\r\nsignal NEWNYM\r\nQUIT' | nc 127.0.0.1 9051
 250 OK
@@ -145,7 +264,7 @@ root@75f6721089f2:/# torify curl http://icanhazip.com/
 185.107.81.233
 ```
 
-### 11. Install privoxy and check traffic is routed through Tor
+#### 11. Install privoxy and check traffic is routed through Tor
 Now that it's clear Tor is configured and works properly we can include `privoxy` to the loop.
 ```console
 root@75f6721089f2:/# apt install -y privoxy
@@ -179,7 +298,7 @@ root@75f6721089f2:/# curl -x 127.0.0.1:8118 http://icanhazip.com/
 176.10.99.200
 ```
 
-### 12. Change and check Tor IP with Python3
+#### 12. Change and check Tor IP with Python3
 ```console
 root@75f6721089f2:/# pip3 install requests==2.26.0
 root@75f6721089f2:/# python3
@@ -209,7 +328,7 @@ root@75f6721089f2:/# python3
 ```
 
 
-### 13. [bonus] Change and check Tor IP with [TorIpChanger](https://github.com/DusanMadar/TorIpChanger)
+#### 13. [bonus] Change and check Tor IP with [TorIpChanger](https://github.com/DusanMadar/TorIpChanger)
 ```console
 root@75f6721089f2:/# pip3 install toripchanger==1.1.3
 root@75f6721089f2:/# python3

@@ -2,7 +2,7 @@
 ## PROXSNEAK
 ![Trafficker](proxysneak.png?raw=true "Proxsneak")
 
-For sneakier sneakerbots and stealthier stealth modes, this provides one single endpoint for clients. Supports **[HAProxy](http://www.haproxy.org/)**, **socks** protocol and **http-proxy** servers: **[polipo](https://www.irif.fr/~jch/software/polipo/)**, **[privoxy](https://www.privoxy.org/)** and **[hpts](https://github.com/oyyd/http-proxy-to-socks)**.
+For sneakier sneakerbots, this provides one single endpoint for clients. Supports **[HAProxy](http://www.haproxy.org/)**, **socks** protocol and **http-proxy** servers: **[polipo](https://www.irif.fr/~jch/software/polipo/)**, **[privoxy](https://www.privoxy.org/)** and **[hpts](https://github.com/oyyd/http-proxy-to-socks)**.
 
 In addition, you can **view** previously running **TOR** processes and create a **new identity** for all or selected processes.
 
